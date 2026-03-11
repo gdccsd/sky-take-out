@@ -39,4 +39,12 @@ public interface EmployeeMapper {
      * 根据关键词修改员工信息
      */
     void update(Employee employee);
+
+    /**
+     * 根据id查询员工信息
+     * @param id
+     * @return
+     */
+    @Select("SELECT id, name, username, password, phone, sex, id_number, status, create_time, update_time, create_user, update_user from employee where id = #{id}")
+    Employee getById(Long id);
 }
