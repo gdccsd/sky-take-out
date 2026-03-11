@@ -77,7 +77,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping
-    public Result<String> Save(@RequestBody EmployeeDTO employeeDTO){
+    public Result Save(@RequestBody EmployeeDTO employeeDTO){
         log.info("新增员工，员工数据：{}",employeeDTO);
 //        System.out.println("当前线程的id为"+Thread.currentThread().getId());
         employeeService.save(employeeDTO);
@@ -94,5 +94,18 @@ public class EmployeeController {
         log.info("分页查询参数为：{}",employeePageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("员工状态：{}，员工id：{}",status,id);
+        employeeService.startOrStop(status,id);
+        return Result.success();
     }
 }
