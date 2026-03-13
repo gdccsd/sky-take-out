@@ -12,6 +12,7 @@
                 and type = #{type}
             </if>
         </where>
+        order by sort asc , create_time desc
     </select>
 
     <update id="update">

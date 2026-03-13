@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -61,6 +63,8 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         category.setStatus(status);
         category.setId(id);
+        category.setUpdateTime(LocalDateTime.now());
+        category.setUpdateUser(BaseContext.getCurrentId());
         categoryMapper.update(category);
     }
 
@@ -74,6 +78,9 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         // 对象属性拷贝
         BeanUtils.copyProperties(categoryDTO, category);
+
+        // 分类状态默认为禁用状态0
+        category.setStatus(StatusConstant.DISABLE);
         category.setCreateTime(LocalDateTime.now());
         category.setUpdateTime(LocalDateTime.now());
         category.setCreateUser(BaseContext.getCurrentId());
@@ -117,5 +124,16 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUpdateTime(LocalDateTime.now());
         category.setUpdateUser(BaseContext.getCurrentId());
         categoryMapper.update(category);
+    }
+
+    /**
+     * 根据类型查询分类
+     * @param type
+     * @return
+     */
+    @Override
+    public List<Category> list(Integer type) {
+        List<Category> list = categoryMapper.list(type);
+        return list;
     }
 }
