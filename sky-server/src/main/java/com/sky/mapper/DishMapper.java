@@ -49,4 +49,18 @@ public interface DishMapper {
      * @return
      */
     int countByStatus(List<Long> ids);
+
+    /**
+     * 修改菜品
+     * @param dish
+     */
+    @AutoFill(OperationType.UPDATE)
+    void update(Dish dish);
+
+    /**
+     * 根据id查询菜品
+     * @param id
+     * @return
+     */
+    DishVO getById(Long id);
 }
