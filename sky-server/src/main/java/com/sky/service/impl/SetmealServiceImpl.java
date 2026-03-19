@@ -3,11 +3,14 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -29,6 +32,9 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
+    @Autowired
+    private DishMapper dishMapper;
 
     /**
      * 套餐分页查询
@@ -117,5 +123,28 @@ public class SetmealServiceImpl implements SetmealService {
             }
             setmealDishMapper.save(setmealDishes);
         }
+    }
+
+    /**
+     * 套餐起售、停售
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        //如果是起售，需判断套餐内的菜品是否全部起售中
+        if (status == StatusConstant.ENABLE){
+            //获取菜品id
+            List<Long> dishIds = setmealDishMapper.getDishIdBySetmealId(id);
+            //获取起售中的菜品数量
+            Integer count = dishMapper.countByStatus(dishIds);
+            if (count < dishIds.size()){//如果没有菜品全部起售
+                throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+            }
+        }
+        Setmeal setmeal = new Setmeal();
+        setmeal.setId(id);
+        setmeal.setStatus(status);
+        setmealMapper.update(setmeal);
     }
 }
