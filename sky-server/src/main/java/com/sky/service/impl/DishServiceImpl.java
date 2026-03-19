@@ -105,12 +105,18 @@ public class DishServiceImpl implements DishService {
     @Override
     public void update(DishDTO dishDTO) {
         Dish dish = new Dish();
+        //属性拷贝
         BeanUtils.copyProperties(dishDTO, dish);
+        //修改菜品数据
         dishMapper.update(dish);
         List<Long> ids = new ArrayList<>();
         ids.add(dishDTO.getId());
+        //删除原先的菜品对应的口味数据
         dishFlavorMapper.deleteByDishId(ids);
-        dishFlavorMapper.save(dishDTO.getFlavors());
+        List<DishFlavor> dishFlavors = dishDTO.getFlavors();
+        if (dishFlavors != null && dishFlavors.size() > 0){//修改后的菜品如果有口味数据，需要处理
+            dishFlavorMapper.save(dishDTO.getFlavors());
+        }
     }
 
     /**
@@ -141,6 +147,7 @@ public class DishServiceImpl implements DishService {
      * @param status
      * @param id
      */
+    @Transactional
     @Override
     public void startOrStop(Integer status, Long id) {
         Dish dish = Dish.builder().status(status).id(id).build();
