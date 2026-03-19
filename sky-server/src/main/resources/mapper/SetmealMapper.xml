@@ -43,4 +43,10 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="getById" resultType="com.sky.vo.SetmealVO">
+        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as categoryName
+            from setmeal s left join category c on s.category_id = c.id
+        where s.id = #{id}
+    </select>
 </mapper>
