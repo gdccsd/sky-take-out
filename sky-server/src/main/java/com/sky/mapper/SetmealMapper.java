@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -41,4 +43,17 @@ public interface SetmealMapper {
      */
     @AutoFill(OperationType.INSERT)
     void save(Setmeal setmeal);
+
+    /**
+     * 根据id查询启用中的套餐的数量
+     * @param ids
+     * @return
+     */
+    int getStatusCount(List<Long> ids);
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    void deleteBatchBySetmealId(List<Long> ids);
 }

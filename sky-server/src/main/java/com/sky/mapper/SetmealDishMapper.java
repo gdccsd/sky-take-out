@@ -32,4 +32,10 @@ public interface SetmealDishMapper {
      */
     @AutoFill(OperationType.INSERT)
     void save(List<SetmealDish> setmealDishes);
+
+    /**
+     * 批量删除套餐和菜品的关联数据
+     * @param ids
+     */
+    void deleteBatchBySetmealId(List<Long> ids);
 }

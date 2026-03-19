@@ -26,4 +26,21 @@
         values (#{id}, #{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime},
                 #{updateTime}, #{createUser}, #{updateUser})
     </insert>
+
+    <select id="getStatusCount" resultType="java.lang.Integer">
+        select count(*)
+        from setmeal
+        where status = 1
+        and id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <delete id="deleteBatchBySetmealId">
+        delete from setmeal where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>
