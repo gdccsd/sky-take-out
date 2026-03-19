@@ -3,14 +3,17 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.Setmeal;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -33,6 +36,8 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+    @Autowired
+    private SetmealMapper setmealMapper;
 
     /**
      * 新增菜品
@@ -129,5 +134,31 @@ public class DishServiceImpl implements DishService {
     public List<Dish> getByCategoryId(Long categoryId) {
         List<Dish> dishs = dishMapper.getByCategoryId(categoryId);
         return dishs;
+    }
+
+    /**
+     * 菜品启售、停售
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder().status(status).id(id).build();
+
+        //如果是停售，则需要将包含该菜品的套餐也一并停售
+        if (status == StatusConstant.DISABLE){
+            //根据菜品id查询与之关联的套餐id
+            List<Long> setmealIds = setmealDishMapper.getIdsByDishId(id);
+            if (setmealIds != null && setmealIds.size() > 0){
+                //将这些套餐也停售
+                for (Long setmealId : setmealIds){
+                    Setmeal setmeal = Setmeal.builder().id(setmealId).status(status).build();
+                    setmealMapper.update(setmeal);
+                }
+            }
+
+        }
+        dishMapper.update(dish);
+
     }
 }
