@@ -49,4 +49,14 @@
             from setmeal s left join category c on s.category_id = c.id
         where s.id = #{id}
     </select>
+    <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
+        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as categoryName
+            from setmeal s left join category c on s.category_id = c.id
+        <where>
+            <if test="name != null and name != ''">and name = #{name}</if>
+            <if test="categoryId != null">and s.category_id = #{categoryId}</if>
+            <if test="status != null">and s.status = #{status}</if>
+        </where>
+        order by s.create_time desc
+    </select>
 </mapper>
